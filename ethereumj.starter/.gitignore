@@ -4,10 +4,14 @@
 
 .idea
 .gradle
+/build/
+/classes/
+!gradle/wrapper/gradle-wrapper.jar
 
 logs
 
 database
+
 /database-transactor/
 /database-miner/
 /logs/

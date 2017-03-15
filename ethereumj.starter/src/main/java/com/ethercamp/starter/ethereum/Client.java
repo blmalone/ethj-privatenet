@@ -42,7 +42,7 @@ public class Client extends EthjNode {
     private static final int GAS_LIMIT = 3_000_000;
     private static final long TRANSACTION_VALUE = 2100000000000000000L;
     private static final int TRANSACTION_THREAD_SLEEP = 16000;
-    private static final int ETHER_TO_TRANSFER_IN_WEI = 1;
+    private static final int ETHER_TO_TRANSFER_IN_WEI = 0;
 
     @Value("${blockchain.key.private}") //found in app.properties
     private String privateKey;
