@@ -1,3 +1,5 @@
 ## ethereumj private network starter
 
-Two nodes are run on the same JVM. One is used for solely mining, the other for submitting transactions to be mined.
+Two ethereum nodes run on the same JVM. One used solely for mining and the other for submitting transactions to be mined.
+
+Useful boilerplate code for kickstarting your development with Ethereumj.
