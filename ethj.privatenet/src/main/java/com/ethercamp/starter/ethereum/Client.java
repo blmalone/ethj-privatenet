@@ -1,13 +1,10 @@
 package com.ethercamp.starter.ethereum;
 
-/**
- * Created by blainemalone on 11/12/2016.
- */
 
+import com.typesafe.config.ConfigFactory;
 import com.ethercamp.starter.service.FileReaderService;
 import com.ethercamp.starter.service.FileReaderServiceImpl;
 import com.ethercamp.starter.service.SolidityCompilerService;
-import com.typesafe.config.ConfigFactory;
 import org.ethereum.config.SystemProperties;
 import org.ethereum.core.Block;
 import org.ethereum.core.CallTransaction;
@@ -35,6 +32,9 @@ import static java.util.Collections.synchronizedMap;
 import static org.bouncycastle.util.encoders.Hex.decode;
 import static org.bouncycastle.util.encoders.Hex.toHexString;
 
+/**
+ * Created by blainemalone on 11/12/2016.
+ */
 @Service
 public class Client extends EthjNode {
 
@@ -44,7 +44,7 @@ public class Client extends EthjNode {
     private static final int TRANSACTION_THREAD_SLEEP = 16000;
     private static final int ETHER_TO_TRANSFER_IN_WEI = 0;
 
-    @Value("${blockchain.key.private}") //found in app.properties
+    @Value("${blockchain.key.private}")
     private String privateKey;
 
     private static final String CLIENT_CONFIG = "client.conf";
@@ -109,29 +109,24 @@ public class Client extends EthjNode {
         //only need this if I am using new version of ethj
         final ECKey senderKey = ECKey.fromPrivate(decode(privateKey));
 
-        ////TODO Should only have to compile once then save off to DB
         CompilationResult.ContractMetadata contractBinary = solidityCompilerService.compileContract();
         CallTransaction.Contract compiledContract = new CallTransaction.Contract(contractBinary.abi);
 
         CallTransaction.Function function = compiledContract.getByName("set");
-        byte[] functionCallBytes = function.encode(515); //here we write random value to SimpleStorage.
+        byte[] functionCallBytes = function.encode(515);
 
         Transaction transaction =
                 sendTransaction(contractAddress, senderKey, ETHER_TO_TRANSFER_IN_WEI, functionCallBytes);
         return toHexString(transaction.getHash());
     }
 
-    public Object testContractRead(String contractAddress) {
-        ////TODO Should only have to compile once then save off to DB
-        CompilationResult.ContractMetadata contractBinary = null;
-        try {
-            contractBinary = solidityCompilerService.compileContract();
-        } catch (IOException e) {}
-        CallTransaction.Contract compiledContract = new CallTransaction.Contract(contractBinary.abi);
+    public Object testContractRead(final String contractAddress) throws IOException {
+        CompilationResult.ContractMetadata contractBinary;
+        contractBinary = solidityCompilerService.compileContract();
 
+        CallTransaction.Contract compiledContract = new CallTransaction.Contract(contractBinary.abi);
         CallTransaction.Function function = compiledContract.getByName("get");
 
-        final ECKey senderKey = ECKey.fromPrivate(decode(privateKey));
         ProgramResult result;
         result = getEthereum().callConstantFunction(contractAddress, function);
         Object[] functionResult = function.decodeResult(result.getHReturn());
@@ -162,8 +157,6 @@ public class Client extends EthjNode {
                                   final String walletSignature,
                                   final String contractAddress, final Object... args)
             throws IOException, InterruptedException {
-
-        //only need this if I am using new version of ethj
         final ECKey senderKey = ECKey.fromPrivate(decode(walletSignature));
 
         ////TODO Should only have to compile once then save off to DB
@@ -179,8 +172,7 @@ public class Client extends EthjNode {
     }
 
     public Object[] readContract(final String functionName,
-                               final String contractAddress, final Object... args) throws IOException {
-        ////TODO Should only have to compile once then save off to DB
+                                 final String contractAddress, final Object... args) throws IOException {
         CompilationResult.ContractMetadata contractBinary = solidityCompilerService.compileContract();
         CallTransaction.Contract compiledContract = new CallTransaction.Contract(contractBinary.abi);
 
@@ -206,9 +198,8 @@ public class Client extends EthjNode {
                 ByteUtil.longToBytesNoLeadZeroes(GAS_LIMIT),
                 recipientWalletAddress == null ? new byte[0] : decode(recipientWalletAddress),
                 ByteUtil.longToBytesNoLeadZeroes(value),
-                data,getEthereum().getChainIdForNextBlock());
-        //,getEthereum().getChainIdForNextBlock() //this goes as last param in the above.
-
+                data,
+                getEthereum().getChainIdForNextBlock());
     }
 
 
@@ -217,15 +208,12 @@ public class Client extends EthjNode {
             throws InterruptedException {
         BigInteger nonce = getEthereum().getRepository().getNonce(senderKey.getAddress());
         LOGGER.info("Sender's Address {}", toHexString(senderKey.getAddress()));
-
         //Creating the transaction to send.
         Transaction transaction = getTransaction(recipientWalletAddress, value, data, nonce);
         //Sign the transaction by the sender.
-        //transaction.sign(senderKey.getPrivKeyBytes());
         transaction.sign(senderKey);
 
         String transactionHash = toHexString(transaction.getHash());
-
         LOGGER.info("Transaction created : {}", transactionHash);
         LOGGER.info("Sending transaction to the network ==> {}", transaction);
         getEthereum().submitTransaction(transaction);

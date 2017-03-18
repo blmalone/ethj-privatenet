@@ -29,8 +29,6 @@ public class EthereumListener extends EthereumListenerAdapter {
         System.out.println();
     }
 
-
-
     /**
      *  Mark the fact that you are touching
      *  the head of the chain

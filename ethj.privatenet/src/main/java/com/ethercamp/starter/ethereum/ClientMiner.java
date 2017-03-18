@@ -29,7 +29,6 @@ public class ClientMiner extends EthjNode implements MinerListener {
             LOGGER.info("Generating Full Dataset. This can take up to 10 min if not cached.");
             // calling this for indication of the dataset generation
             Ethash ethash = Ethash.getForBlock(getSystemProperties(), getEthereum().getBlockchain().getBestBlock().getNumber());
-            //Ethash ethash = Ethash.getForBlock(getEthereum().getBlockchain().getBestBlock().getNumber());
             ethash.getFullDataset();
             LOGGER.info("Full dataset generated.");
         }

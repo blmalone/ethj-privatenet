@@ -20,7 +20,6 @@ public class MyRestController {
 
     private final int TIME_TO_WAIT = 30000;
 
-
     //GET endpoint for testing purposes.
     @RequestMapping(value = "test/contract", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseStatus(value = HttpStatus.ACCEPTED)
@@ -31,7 +30,6 @@ public class MyRestController {
             waitForTransactionToBeMined();
             contractAddress.put("value: ",
                     String.valueOf(client.testContractRead(contractAddress.get("contractAddress"))));
-        //Value is always Zero even though we write the value 515 to SimpleStorage contract.
             return contractAddress;
     }
 
