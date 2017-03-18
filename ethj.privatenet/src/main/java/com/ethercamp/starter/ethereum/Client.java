@@ -44,15 +44,12 @@ public class Client extends EthjNode {
     private static final int TRANSACTION_THREAD_SLEEP = 16000;
     private static final int ETHER_TO_TRANSFER_IN_WEI = 0;
 
-    @Value("${blockchain.key.private}")
+    @Value("${ellipticcurve.key.private}")
     private String privateKey;
 
     private static final String CLIENT_CONFIG = "client.conf";
-
-    private FileReaderService fileReaderService = new FileReaderServiceImpl();
-
-    private SolidityCompilerService solidityCompilerService = new SolidityCompilerService();
-
+    private final FileReaderService fileReaderService = new FileReaderServiceImpl();
+    private final SolidityCompilerService solidityCompilerService = new SolidityCompilerService();
     private Map<ByteArrayWrapper, Transaction> pendingTransactions = synchronizedMap(new HashMap<>());
 
     @Override
